@@ -131,45 +131,45 @@ workflows:
     - script:
         title: Prepare cache folder
         inputs:
-          - content: |-
-              set -e
+        - content: |-
+            set -e
 
-              ORIG_DIR=$BITRISE_SOURCE_DIR/orig
-              CACHE_DIR=$BITRISE_SOURCE_DIR/cache
-              envman add --key ORIG_DIR --value $ORIG_DIR
-              envman add --key CACHE_DIR --value $CACHE_DIR
+            ORIG_DIR=$BITRISE_SOURCE_DIR/orig
+            CACHE_DIR=$BITRISE_SOURCE_DIR/cache
+            envman add --key ORIG_DIR --value $ORIG_DIR
+            envman add --key CACHE_DIR --value $CACHE_DIR
 
-              rm -rf $ORIG_DIR
-              mkdir $ORIG_DIR
-              date >> $ORIG_DIR/multikey_0.txt
-              date >> $ORIG_DIR/multikey_1_0.txt
-              date >> $ORIG_DIR/multikey_1_1.txt
-              date >> $ORIG_DIR/multikey_2_0.txt
-              date >> $ORIG_DIR/multikey_2_1.txt
-              date >> $ORIG_DIR/multikey_3.txt
-              mkdir $ORIG_DIR/multikey_4
-              date >> $ORIG_DIR/multikey_4/multikey_4_0.txt
-              date >> $ORIG_DIR/multikey_4/multikey_4_1.txt
-              date >> $ORIG_DIR/multikey_5_0.txt
-              date >> $ORIG_DIR/multikey_5_1.txt
+            rm -rf $ORIG_DIR
+            mkdir $ORIG_DIR
+            date >> $ORIG_DIR/multikey_0.txt
+            date >> $ORIG_DIR/multikey_1_0.txt
+            date >> $ORIG_DIR/multikey_1_1.txt
+            date >> $ORIG_DIR/multikey_2_0.txt
+            date >> $ORIG_DIR/multikey_2_1.txt
+            date >> $ORIG_DIR/multikey_3.txt
+            mkdir $ORIG_DIR/multikey_4
+            date >> $ORIG_DIR/multikey_4/multikey_4_0.txt
+            date >> $ORIG_DIR/multikey_4/multikey_4_1.txt
+            date >> $ORIG_DIR/multikey_5_0.txt
+            date >> $ORIG_DIR/multikey_5_1.txt
 
-              rm -rf $CACHE_DIR
-              mkdir $CACHE_DIR
-              cp -r $ORIG_DIR/. $CACHE_DIR/
+            rm -rf $CACHE_DIR
+            mkdir $CACHE_DIR
+            cp -r $ORIG_DIR/. $CACHE_DIR/
 
     - git::https://github.com/bitrise-steplib/bitrise-step-multikey-save-cache.git@initial-step-implementation:
         title: Save
         run_if: "true"
         is_skippable: false
         inputs:
-          - key_path_pairs: |-
-              [u] multikey_restore_0 = $CACHE_DIR/multikey_0.txt
-              [u] multikey_restore_1 = $CACHE_DIR/multikey_1_0.txt, $CACHE_DIR/multikey_1_1.txt
-              [u]multikey_restore_2=$CACHE_DIR/multikey_2_0.txt,$CACHE_DIR/multikey_2_1.txt
-              multikey_restore_3 = $CACHE_DIR/multikey_3.txt
-              multikey_restore_4 = $CACHE_DIR/multikey_4
-              multikey_restore_5=$CACHE_DIR/multikey_5_0.txt,$CACHE_DIR/multikey_5_1.txt
-          - verbose: "true"
+        - key_path_pairs: |-
+            [u] multikey_save_0_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_0.txt
+            [u] multikey_save_1_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_1_0.txt, $CACHE_DIR/multikey_1_1.txt
+            [u] multikey_save_2_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_2_0.txt, $CACHE_DIR/multikey_2_1.txt
+            multikey_save_3_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_3.txt
+            multikey_save_4_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_4
+            multikey_save_5_$BITRISE_BUILD_NUMBER = $CACHE_DIR/multikey_5_0.txt, $CACHE_DIR/multikey_5_1.txt
+        - verbose: "true"
     - script:
         title: Clean cache folder
         inputs:
@@ -183,24 +183,24 @@ workflows:
         is_skippable: false
         inputs:
         - keys: |-
-            multikey_restore_0
-            invalid_1 || multikey_restore_1
-            multikey_restore_4
+            multikey_save_0_$BITRISE_BUILD_NUMBER
+            invalid_1 || multikey_save_1_$BITRISE_BUILD_NUMBER
+            multikey_save_4_$BITRISE_BUILD_NUMBER
         - verbose: "true"
     - script:
         title: Define expectation
         inputs:
-          - content: |-
-              cat <<EOF > expected_files.txt
-              ./multikey_1_0.txt
-              ./multikey_1_1.txt
-              ./multikey_4/multikey_4_1.txt
-              ./multikey_4/multikey_4_0.txt
-              ./multikey_0.txt
-              EOF
+        - content: |-
+            cat <<EOF > $BITRISE_SOURCE_DIR/expected_files.txt
+            ./multikey_1_0.txt
+            ./multikey_1_1.txt
+            ./multikey_4/multikey_4_1.txt
+            ./multikey_4/multikey_4_0.txt
+            ./multikey_0.txt
+            EOF
     - bundle::check:
         inputs:
-        - expected: "expected_files.txt"
+        - expected: $BITRISE_SOURCE_DIR/expected_files.txt
         - dir: $CACHE_DIR
         - orig_dir: $ORIG_DIR
 
