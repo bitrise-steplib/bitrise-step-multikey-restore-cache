@@ -157,7 +157,7 @@ workflows:
               mkdir $CACHE_DIR
               cp -r $ORIG_DIR/. $CACHE_DIR/
 
-    - git::https://github.com/bitrise-steplib/bitrise-step-multikey-save-cache.git@initial-implementation:
+    - git::https://github.com/bitrise-steplib/bitrise-step-multikey-save-cache.git@initial-step-implementation:
         title: Save
         run_if: "true"
         is_skippable: false
