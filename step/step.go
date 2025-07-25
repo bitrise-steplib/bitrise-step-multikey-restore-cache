@@ -14,13 +14,18 @@ import (
 )
 
 const (
-	stepId = "multikey-restore-cache"
+	stepId   = "multikey-restore-cache"
+	keyLimit = 10 // maximum number of keys to restore in a single step
+	altLimit = 10 // maximum number of alternative keys that can be used for a single key
 
 	fmtErrNoKeysFound           = "no keys found in input"
 	fmtErrFailure               = "save failed"
 	fmtErrPartialFailure        = "save failures\n"
 	fmtErrPartialFailureDetails = "    - %s\n"
 	fmtErrEvaluation            = "keys evaluation failure: %w"
+
+	fmtWarnKeyLimitReached = "Skipping additional keys as the limit of %d keys has been reached"
+	fmtWarnAltLimitReached = "Skipping additional alternatives for key %s as the limit of %d alternatives has been reached"
 )
 
 type Input struct {
@@ -60,7 +65,7 @@ func (step MultikeyRestoreCacheStep) Run() error {
 	step.logger.Println()
 	step.logger.EnableDebugLog(input.Verbose)
 
-	keys, evaluationError := input.evaluateKeys()
+	keys, evaluationError := input.evaluateKeys(step.logger)
 	if evaluationError != nil {
 		return fmt.Errorf(fmtErrEvaluation, evaluationError)
 	}
@@ -100,12 +105,17 @@ func (step MultikeyRestoreCacheStep) Run() error {
 	return nil
 }
 
-func (input Input) evaluateKeys() ([][]string, error) {
+func (input Input) evaluateKeys(logger log.Logger) ([][]string, error) {
 	var keys [][]string
 
 	lines := strings.Split(input.Keys, "\n")
 
-	for _, line := range lines {
+	for lineIdx, line := range lines {
+		if lineIdx >= keyLimit {
+			logger.Warnf(fmtWarnKeyLimitReached, keyLimit)
+			break
+		}
+
 		keyStrings := strings.Split(line, "||")
 
 		if strings.TrimSpace(keyStrings[0]) == "" && len(keyStrings) == 1 {
@@ -113,7 +123,11 @@ func (input Input) evaluateKeys() ([][]string, error) {
 		}
 
 		var alternatives []string
-		for _, keyString := range keyStrings {
+		for altIdx, keyString := range keyStrings {
+			if altIdx >= altLimit && len(keyStrings) > 0 {
+				logger.Warnf(fmtWarnAltLimitReached, keyStrings[0], altLimit)
+				break
+			}
 			key := strings.TrimSpace(keyString)
 			if key != "" {
 				alternatives = append(alternatives, key)
