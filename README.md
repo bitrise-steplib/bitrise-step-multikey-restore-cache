@@ -62,9 +62,9 @@ Examples of `getenv`:
 
 #### Key matching
 
-The most straightforward use case is when both the **Save cache** and **Restore cache** Steps use the same exact key to transfer cache between builds. Stored cache archives are scoped to the Bitrise project. Builds can restore caches saved by any previous Workflow run on any Bitrise Stack.
+The most straightforward use case is when both the **Multikey save cache** and **Multikey restore cache** Steps use the same exact key to transfer cache between builds. Stored cache archives are scoped to the Bitrise project. Builds can restore caches saved by any previous Workflow run on any Bitrise Stack.
 
-Unlike this Step, the **Restore cache** Step can define multiple keys as fallbacks when there is no match for the first cache key. See the docs of the **Restore cache** Step for more details.
+Unlike this Step, the **Multikey Restore cache** Step can define multiple keys as fallbacks when there is no match for the first cache key. See the docs of the **Multikey restore cache** Step for more details.
 
 #### Skip saving the cache
 
