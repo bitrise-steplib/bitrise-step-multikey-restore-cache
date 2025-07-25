@@ -2,7 +2,7 @@
 
 [![Step changelog](https://shields.io/github/v/release/bitrise-steplib/bitrise-step-multikey-save-cache?include_prereleases&label=changelog&color=blueviolet)](https://github.com/bitrise-steplib/bitrise-step-multikey-save-cache/releases)
 
-Restores items from the cache based on key-value pairs. This Step needs to be used in combination with **Multikey Save Cache** or **Save Cache**.
+Restores items from the cache based on a list of keys. This Step needs to be used in combination with **Multikey Save Cache** or **Save Cache**.
 
 <details>
 <summary>Description</summary>
