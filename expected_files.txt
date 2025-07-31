@@ -1,5 +1,0 @@
-./multikey_1_0.txt
-./multikey_1_1.txt
-./multikey_4/multikey_4_1.txt
-./multikey_4/multikey_4_0.txt
-./multikey_0.txt

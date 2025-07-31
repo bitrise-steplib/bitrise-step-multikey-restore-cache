@@ -76,16 +76,19 @@ func (step MultikeyRestoreCacheStep) Run() error {
 	for _, keyAndFallbacks := range keys {
 		wg.Add(1)
 
-		restore(
-			step,
-			CacheInput{
-				Verbose:         input.Verbose,
-				KeyAndFallbacks: keyAndFallbacks,
-				NumFullRetries:  input.NumFullRetries,
-			},
-			&wg,
-			errs,
-		)
+		go func(input Input, keyAndFallbacks []string) {
+			defer wg.Done()
+
+			restore(
+				step,
+				CacheInput{
+					Verbose:         input.Verbose,
+					KeyAndFallbacks: keyAndFallbacks,
+					NumFullRetries:  input.NumFullRetries,
+				},
+				errs,
+			)
+		}(input, keyAndFallbacks)
 	}
 
 	wg.Wait()
@@ -153,11 +156,8 @@ type CacheInput struct {
 func restore(
 	step MultikeyRestoreCacheStep,
 	cacheInput CacheInput,
-	wg *sync.WaitGroup,
 	errors chan<- error,
 ) {
-	defer wg.Done()
-
 	err := cache.NewRestorer(
 		step.envRepo,
 		step.logger,

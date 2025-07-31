@@ -1,7 +1,7 @@
-title: Restore Cache
-summary: Restores build cache using a cache key. This Step needs to be used in combination with **Save Cache**.
+title: Multikey Restore Cache
+summary: Restores build cache using a cache keys. This Step needs to be used in combination with **Multikey Save Cache** or **Save Cache**.
 description: |
-  Restores items from the cache based on a list of keys. This Step needs to be used in combination with **Multikey Save Cache** or **Save Cache**.
+  Restores items from the cache based on a list of keys.
 
   The format of the keys input is the following:
   ```
@@ -9,8 +9,7 @@ description: |
   KEY2
   KEY3 || KEY3_ALTERNATIVE1
   ```
-  The number of keys and paths for each are limited to a number of 10.
-  The same templates can be used for the keys and paths as in the **Restore Cache** step.
+  The number of keys and paths for each are limited to a number of 10. Commas (`,`) and equal signs (`=`) are not allowed in keys. See templates that can be used in the keys below.
 
   Example (somewhat artificial):
   ```
@@ -23,7 +22,7 @@ description: |
 
   #### About key-based caching
 
-  Key-based caching is a concept where cache archives are saved and restored using a unique cache key. One Bitrise project can have multiple cache archives stored simultaneously, and the **Restore Cache Step** downloads a cache archive associated with the key provided as a Step input.
+  Key-based caching is a concept where cache archives are saved and restored using a unique cache key. One Bitrise project can have multiple cache archives stored simultaneously, and the **Multikey Restore Cache** step downloads a cache archive associated with the key provided as a Step input.
 
   Caches can become outdated across builds when something changes in the project (for example, a dependency gets upgraded to a new version). In this case, a new (unique) cache key is needed to save the new cache contents. This is possible if the cache key is dynamic and changes based on the project state (for example, a checksum of the dependency lockfile is part of the cache key). If you use the same dynamic cache key when restoring the cache, the Step will download the most relevant cache archive available.
 

@@ -7,14 +7,15 @@ Restores items from the cache based on a list of keys. This Step needs to be use
 <details>
 <summary>Description</summary>
 
-Restores items from the cache based on keys in the form of:
+Restores items from the cache based on a list of keys.
+
+The format of the keys input is the following:
 ```
 KEY1 || KEY1_ALTERNATIVE1 || KEY1_ALTERNATIVE2
 KEY2
 KEY3 || KEY3_ALTERNATIVE1
 ```
-The number of keys and paths for each are limited to a number of 10.
-The same templates can be used for the keys and paths as in the **Restore Cache** step.
+The number of keys and paths for each are limited to a number of 10. Commas (`,`) and equal signs (`=`) are not allowed in keys. See templates that can be used in the keys below.
 
 Example (somewhat artificial):
 ```
@@ -27,7 +28,7 @@ This Step needs to be used in combination with **Multikey Save Cache** or **Save
 
 #### About key-based caching
 
-Key-based caching is a concept where cache archives are saved and restored using a unique cache key. One Bitrise project can have multiple cache archives stored simultaneously, and the **Restore Cache Step** downloads a cache archive associated with the key provided as a Step input. The **Save Cache** Step is responsible for uploading the cache archive with an exact key.
+Key-based caching is a concept where cache archives are saved and restored using a unique cache key. One Bitrise project can have multiple cache archives stored simultaneously, and the **Multikey Restore Cache** step downloads a cache archive associated with the key provided as a Step input. The **Multikey Save Cache** step is responsible for uploading the cache archive with an exact key.
 
 Caches can become outdated across builds when something changes in the project (for example, a dependency gets upgraded to a new version). In this case, a new (unique) cache key is needed to save the new cache contents. This is possible if the cache key is dynamic and changes based on the project state (for example, a checksum of the dependency lockfile is part of the cache key). If you use the same dynamic cache key when restoring the cache, the Step will download the most relevant cache archive available.
 
@@ -35,7 +36,7 @@ Key-based caching is platform-agnostic and can be used to cache anything by care
 
 #### Templates
 
-The Step requires a string key to use when uploading a cache archive. In order to always download the most relevant cache archive for each build, the cache key input can contain template elements. The **Restore cache Step** evaluates the key template at runtime and the final key value can change based on the build environment or files in the repo. Similarly, the **Save cache** Step also uses templates to compute a unique cache key when uploading a cache archive.
+The Step requires a string key to use when uploading a cache archive. In order to always download the most relevant cache archive for each build, the cache key input can contain template elements. The **Multikey Restore Cache** step evaluates the key template at runtime and the final key value can change based on the build environment or files in the repo. Similarly, the **Multikey Save Cache** step also uses templates to compute a unique cache key when uploading a cache archive.
 
 The following variables are supported in the **Cache key** input:
 
@@ -62,9 +63,9 @@ Examples of `getenv`:
 
 #### Key matching
 
-The most straightforward use case is when both the **Multikey save cache** and **Multikey restore cache** Steps use the same exact key to transfer cache between builds. Stored cache archives are scoped to the Bitrise project. Builds can restore caches saved by any previous Workflow run on any Bitrise Stack.
+The most straightforward use case is when both the **Multikey Save Cache** and **Multikey Restore Cache** Steps use the same exact key to transfer cache between builds. Stored cache archives are scoped to the Bitrise project. Builds can restore caches saved by any previous Workflow run on any Bitrise Stack.
 
-Unlike this Step, the **Multikey Restore cache** Step can define multiple keys as fallbacks when there is no match for the first cache key. See the docs of the **Multikey restore cache** Step for more details.
+The **Multikey Restore Cache** Step can define multiple keys as fallbacks when there is no match for the first cache key.
 
 #### Skip saving the cache
 
@@ -74,7 +75,7 @@ The Step can decide to skip saving a new cache entry to avoid unnecessary work. 
 
 - [Save Cache](https://github.com/bitrise-steplib/bitrise-step-save-cache/)
 - [Restore Cache](https://github.com/bitrise-steplib/bitrise-step-restore-cache/)
-- [Multikey Restore Cache](https://github.com/bitrise-steplib/bitrise-step-multikey-restore-cache/)
+- [Multikey Save Cache](https://github.com/bitrise-steplib/bitrise-step-multikey-save-cache/)
 
 </details>
 
@@ -112,9 +113,9 @@ Cache is not guaranteed to work across different Bitrise Stacks (different OS or
 
 ```yaml
 steps:
-- multikey-save-cache@1:
+- multikey-restore-cache@1:
     inputs:
-    - key_path_pairs: |-
+    - keys: |-
         {{ .OS }}-{{ .Arch }}-npm-cache-{{ checksum "package-lock.json" }} = node_modules
 ```
 
@@ -124,10 +125,10 @@ You can add multiple instances of this Step to a Workflow:
 
 ```yaml
 steps:
-- multikey-save-cache@1:
+- multikey-restore-cache@1:
     title: Save cache
     inputs:
-    - key_path_pairs: |-
+    - keys: |-
         node-modules-{{ checksum "package-lock.json" }} = node_modules
         pip-packages-{{ checksum "requirements.txt" }} = venv/
 ```
@@ -140,15 +141,17 @@ steps:
 
 | Key | Description | Flags | Default |
 | --- | --- | --- | --- |
-| `key_path_pairs` | Key used for saving a cache archive.  The key supports template elements for creating dynamic cache keys. These dynamic keys change the final key value based on the build environment or files in the repo in order to create new cache archives. See the Step description for more details and examples.  The maximum length of a key is 512 characters (longer keys get truncated). Commas (`,`) are not allowed in keys. | required |  |
+| `keys` | Keys used to restore cache archives. The keys support template elements for creating dynamic cache keys. These dynamic keys change the final key value based on the build environment or files in the repo in order to create new cache archives. See the Step description for more details and examples. The maximum length of a key is 512 characters (longer keys get truncated). Commas (`,`) and equal signs (`=`) are not allowed in keys. | required |  |
 | `verbose` | Enable logging additional information for troubleshooting | required | `false` |
-| `compression_level` | Zstd compression level to control speed / archive size. Set to 1 for fastest option. Valid values are between 1 and 19. Defaults to 3. |  | `3` |
-| `custom_tar_args` | Additional arguments to pass to the tar command when creating the cache archive.  The arguments are passed directly to the `tar` command. Use this input to customize the behavior of the tar command when creating the cache archive (these are appended to the default arguments used by the step).  Example: `--format posix` |  |  |
+| `retries` |  Number of retries to attempt when downloading a cache archive fails. The value 0 means no retries are attempted. |  | `3` |
 </details>
 
 <details>
 <summary>Outputs</summary>
-There are no outputs defined in this step
+
+| Key | Description |
+| --- | --- |
+| `BITRISE_CACHE_HIT` | Indicates if a cache entry was restored. Possible values: `exact`, `partial`, `false` |
 </details>
 
 ## 🙋 Contributing
