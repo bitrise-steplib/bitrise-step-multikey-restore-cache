@@ -74,7 +74,7 @@ workflows:
         - orig_dir: $ORIG_DIR
     - bundle::check_output:
         inputs:
-        - expected: "partial"
+        - expected: partial
 
   test_key_templates:
     description: |
