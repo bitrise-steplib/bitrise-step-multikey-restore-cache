@@ -28,7 +28,7 @@ steps:
 - multikey-restore-cache@1:
     inputs:
     - keys: |-
-        {{ .OS }}-{{ .Arch }}-npm-cache-{{ checksum "package-lock.json" }} = node_modules
+        {{ .OS }}-{{ .Arch }}-npm-cache-{{ checksum "package-lock.json" }}
 ```
 
 #### Multiple independent caches
@@ -41,6 +41,6 @@ steps:
     title: Save cache
     inputs:
     - keys: |-
-        node-modules-{{ checksum "package-lock.json" }} = node_modules
-        pip-packages-{{ checksum "requirements.txt" }} = venv/
+        node-modules-{{ checksum "package-lock.json" }}
+        pip-packages-{{ checksum "requirements.txt" }}
 ```

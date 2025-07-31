@@ -121,23 +121,23 @@ func (input Input) evaluateKeys(logger log.Logger) ([][]string, error) {
 
 		keyStrings := strings.Split(line, "||")
 
-		if strings.TrimSpace(keyStrings[0]) == "" && len(keyStrings) == 1 {
+		if len(keyStrings) == 1 && strings.TrimSpace(keyStrings[0]) == "" {
 			continue
 		}
 
-		var alternatives []string
+		var keyAndAlternatives []string
 		for altIdx, keyString := range keyStrings {
-			if altIdx >= altLimit && len(keyStrings) > 0 {
+			if altIdx >= altLimit {
 				logger.Warnf(fmtWarnAltLimitReached, keyStrings[0], altLimit)
 				break
 			}
 			key := strings.TrimSpace(keyString)
 			if key != "" {
-				alternatives = append(alternatives, key)
+				keyAndAlternatives = append(keyAndAlternatives, key)
 			}
 		}
 
-		keys = append(keys, alternatives)
+		keys = append(keys, keyAndAlternatives)
 	}
 
 	if len(keys) == 0 {
