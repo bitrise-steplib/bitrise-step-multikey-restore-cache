@@ -19,9 +19,9 @@ const (
 	altLimit = 10 // maximum number of alternative keys that can be used for a single key
 
 	fmtErrNoKeysFound           = "no keys found in input"
-	fmtErrFailure               = "save failed"
-	fmtErrPartialFailure        = "save failures\n"
-	fmtErrPartialFailureDetails = "    - %s\n"
+	fmtErrFailure               = "restoration failed"
+	fmtErrPartialFailure        = "restoration failures"
+	fmtErrPartialFailureDetails = "    - %s"
 	fmtErrEvaluation            = "keys evaluation failure: %w"
 
 	fmtWarnKeyLimitReached = "Skipping additional keys as the limit of %d keys has been reached"
