@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/bitrise-steplib/bitrise-step-multistep-restore-cache/step"
+	"github.com/bitrise-steplib/bitrise-step-multikey-restore-cache/step"
 
 	"github.com/bitrise-io/go-steputils/v2/stepconf"
 	"github.com/bitrise-io/go-utils/v2/command"

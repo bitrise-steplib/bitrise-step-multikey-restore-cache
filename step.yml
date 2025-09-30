@@ -76,9 +76,9 @@ description: |
 
   [Save cache](https://github.com/bitrise-steplib/bitrise-step-save-cache/)
 
-website: https://github.com/bitrise-steplib/bitrise-step-restore-cache
-source_code_url: https://github.com/bitrise-steplib/bitrise-step-restore-cache
-support_url: https://github.com/bitrise-steplib/bitrise-step-restore-cache/issues
+website: https://github.com/bitrise-steplib/bitrise-step-multikey-restore-cache
+source_code_url: https://github.com/bitrise-steplib/bitrise-step-multikey-restore-cache
+support_url: https://github.com/bitrise-steplib/bitrise-step-multikey-restore-cache/issues
 
 type_tags:
 - utility
@@ -94,7 +94,7 @@ deps:
 
 toolkit:
   go:
-    package_name: github.com/bitrise-steplib/bitrise-step-restore-cache
+    package_name: github.com/bitrise-steplib/bitrise-step-multikey-restore-cache
 
 inputs:
 - keys:
