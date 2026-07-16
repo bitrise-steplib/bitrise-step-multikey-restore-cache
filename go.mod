@@ -3,13 +3,13 @@ module github.com/bitrise-steplib/bitrise-step-multikey-restore-cache
 go 1.21
 
 require (
-	github.com/bitrise-io/go-steputils/v2 v2.0.0-alpha.51
+	github.com/bitrise-io/go-steputils/v2 v2.0.0-alpha.52
 	github.com/bitrise-io/go-utils/v2 v2.0.0-alpha.34
 )
 
 require (
 	github.com/bitrise-io/go-utils v1.0.13 // indirect
-	github.com/bitrise-io/got v0.0.0-20240902113940-25f6469d1456 // indirect
+	github.com/bitrise-io/got v0.0.0-20260223134234-6d4aa9f90a75 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/gofrs/uuid/v5 v5.2.0 // indirect
